@@ -1,4 +1,4 @@
-# smdqs
+# smdQS
 A minimalistic javascript wrapper for the jquery babied...
 
 Examples:
@@ -34,3 +34,6 @@ if (aListOfNodes.isDomObject && aListOfNodes.isList) {
 ```
 
 i recommend docReady() to use this smdQS as replacement for $( document ).ready(function() {}); => https://github.com/desandro/doc-ready
+
+
+Matthias Weiß / Schwäbisch Media Digital
