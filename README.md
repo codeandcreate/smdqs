@@ -27,7 +27,7 @@ if (aListOfNodes.isDomObject && aListOfNodes.isList) {
 		oneOfThisNodes.removeAttribute("onclick");
 		oneOfThisNodes.addEventListener("click", function() 
 		{
-			console.log("You have Clicked on button with index " + index);
+			console.log("You have clicked on button with index " + index);
 		});
 	});
 } 
