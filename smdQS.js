@@ -56,8 +56,8 @@ function smdQSinitHtmLElements()
  * Subfunctions and Unterfunktionen und properties:
  *
  * ajax()		-	jQuery.ajax() Equivalent (doesn't need a valid DOM node)
- * forEach()	-	go through a list of nodes
- * isDomObject	-	true / false: Shows, if one or more nodes are found
+ * forEach()		-	go through a list of nodes
+ * isDomObject		-	true / false: Shows, if one or more nodes are found
  * isList		- 	true / false: If more than one nodes are found, this is "true" and you have to use "forEach()"
  *
  * @param selector		CSS/jQuery like Selektor (uses querySelectorAll)
@@ -72,8 +72,8 @@ var smdQS = function(selector, baseObj)
 	 * @param url			URL which will be called (without GET params!)
 	 * @param callback		Callback function, that gets the responseText if status 200 or 201 is returned
 	 * @param data			data as array or string (...=...&...=...)
-     * @param method		GET (default), POST, PUT, DELETE
-     */
+	 * @param method		GET (default), POST, PUT, DELETE
+	 */
 	function ajax(url, callback, data, method)
 	{
 		var xmlHttp = null;
