@@ -33,7 +33,8 @@ if (aListOfNodes.isDomObject && aListOfNodes.isList) {
 } 
 ```
 
-i recommend docReady() to use this smdQS as replacement for $( document ).ready(function() {}); => https://github.com/desandro/doc-ready
+I recommend docReady() as replacement for "$( document ).ready(function() {});" with smdQS.
+https://github.com/desandro/doc-ready
 
 
 Matthias Weiß / Schwäbisch Media Digital
