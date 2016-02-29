@@ -34,7 +34,7 @@ if (aListOfNodes.isDomObject && aListOfNodes.isList) {
 ```
 
 I recommend docReady() as replacement for "$( document ).ready(function() {});" with smdQS.
-https://github.com/desandro/doc-ready
+https://github.com/jfriend00/docReady
 
 
 Matthias Weiß / Schwäbisch Media Digital
