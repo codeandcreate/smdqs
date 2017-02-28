@@ -1,12 +1,15 @@
 # smdQS
-A minimalistic javascript wrapper for the jquery babied...
+A minimalistic javascript for the jquery babied...
 
-Changes:
+
+## Changes
 
 some day 2015	- 1.0: 		Initial version
+
 28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready
 
-Examples:
+
+## Examples
 
 - ajax() call:
 ``` js
