@@ -144,15 +144,14 @@
 		}
 	
 		"use strict";
-		var ref = w.document.getElementsByTagName( "script" )[ 0 ];
-		var script = w.document.createElement( "script" );
+		var ref = window.document.getElementsByTagName( "script" )[ 0 ];
+		var script = window.document.createElement( "script" );
 		script.src = scriptSource;
 		script.async = true;
 		ref.parentNode.insertBefore( script, ref );
 		if (callback && typeof(callback) === "function") {
 			script.onload = callback;
 		}
-		return script;
 	};
 	
 	/**
