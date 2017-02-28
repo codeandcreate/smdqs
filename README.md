@@ -1,12 +1,31 @@
 # smdQS
 A minimalistic javascript wrapper for the jquery babied...
 
+Changes:
+
+some day 2015	- 1.0: 		Initial version
+28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready
+
 Examples:
 
-- ajax-Call:
+- ajax() call:
 ``` js
 smdQS().ajax("/testscript.php", function( returnData ) {
 	console.log(returnData);					
+}
+```
+
+- ready() - Execute something on document ready:
+``` js
+smdQS().ready(function() {
+	console.log("document is ready");					
+}
+```
+
+- requireJS() - load an other js:
+``` js
+smdQS().requireJS("/js/somejsfile.js", function() {
+	console.log("js file is loaded.");					
 }
 ```
 
@@ -33,8 +52,7 @@ if (aListOfNodes.isDomObject && aListOfNodes.isList) {
 } 
 ```
 
-I recommend docReady() as replacement for "$( document ).ready(function() {});" with smdQS.
-https://github.com/jfriend00/docReady
 
+This version includes a forked version of docReady (https://github.com/jfriend00/docReady)
 
 Matthias Weiß / Schwäbisch Media Digital
