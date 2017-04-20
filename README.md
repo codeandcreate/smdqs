@@ -8,7 +8,7 @@ some day 2015	- 1.0: 		Initial version
 
 28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready
 
-20.04.2017	- 2.0-testing:  dropped "isDomObject"
+20.04.2017	- 2.0-testing:  dropped "isDomObject", added requireCSS
 
 ## Examples
 
@@ -30,6 +30,13 @@ smdQS().ready(function() {
 ``` js
 smdQS().requireJS("/js/somejsfile.js", function() {
 	console.log("js file is loaded.");					
+}
+```
+
+- requireCSS() - load an other css:
+``` js
+smdQS().requireCSS("/css/somecssfile.css", function() {
+	console.log("css file is loaded.");					
 }
 ```
 
