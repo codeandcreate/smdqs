@@ -8,6 +8,7 @@ some day 2015	- 1.0: 		Initial version
 
 28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready
 
+20.04.2017	- 2.0-testing:  dropped "isDomObject"
 
 ## Examples
 
@@ -43,7 +44,7 @@ if (myNode.hasClass("aNiceClass")) {
 - working with lists of nodes:
 ``` js
 var aListOfNodes = smdQS(".btn");
-if (aListOfNodes.isDomObject && aListOfNodes.isList) {
+if (aListOfNodes !== null && aListOfNodes.isList) {
 	aListOfNodes.forEach(function(index, oneOfThisNodes) 
 	{
 		oneOfThisNodes.removeAttribute("onclick");
