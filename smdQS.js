@@ -7,7 +7,7 @@
  *
  * @changes		20150000	MW	:	- Initialversion
  *      		20170300	MW	:	- New structure and tools (docReady and loadJS)
- *              20170420    MW  :   - dropped "isDomObject"
+ *              	20170420   	MW  	:	- dropped "isDomObject", added requireCSS
  *
  */
 (function(funcName, baseObj)
@@ -22,6 +22,8 @@
 
 	/**
 	 * Initializer for prototype funktions hasClass, addClass, removeClass, toggleClass
+	 *
+	 * @private
 	 */
 	function _smdQSinitHtmLElements()
 	{
@@ -68,6 +70,7 @@
 	 * @param callback      Callback function, that gets the responseText if status 200 or 201 is returned
 	 * @param data          data as array or string (...=...&...=...)
 	 * @param method        GET (default), POST, PUT, DELETE
+	 * @private
 	 */
 	function _ajax(url, callback, data, method)
 	{
@@ -134,27 +137,80 @@
 
 	/**
 	 * Based on loadJS;
-	 * inserts a script-tag and executes an optional callback onload
+	 * inserts a script tag or a link (css) tag  and executes an optional callback onload
 	 *
-	 * @param scriptSource    URL of a js-script
+	 * @param type      type of the script (stylesheet or javascript)
+	 * @param source    URL of a script
 	 * @param callback        optional callback function
+	 * @private
 	 */
-	function _requireJS(scriptSource, callback)
+	function _requireElement(type, source, callback)
 	{
-		if (typeof scriptSource === "undefined") {
+		if (typeof source === "undefined" || typeof type === "undefined") {
 			return false;
 		}
 
 		"use strict";
-		var ref      = window.document.getElementsByTagName("script")[0];
-		var script   = window.document.createElement("script");
-		script.src   = scriptSource;
-		script.async = true;
-		ref.parentNode.insertBefore(script, ref);
+
+		var ref        = null;
+		var newElement = null;
+
+		switch (type) {
+			case 'javascript':
+				ref              = window.document.getElementsByTagName("script")[0];
+				newElement       = window.document.createElement("script");
+				newElement.src   = source;
+				newElement.async = true;
+				break;
+			case 'stylesheet':
+				ref             = window.document.getElementsByTagName("link")[0];
+				newElement      = window.document.createElement("link");
+				newElement.href = source;
+				newElement.type = "text/css";
+				newElement.rel  = "stylesheet";
+				break;
+		}
+
+		if (newElement === null) {
+			return false;
+		}
+
+		if (ref === null) {
+			window.document.querySelector("head").appendChild(newElement);
+		} else {
+			ref.parentNode.insertBefore(newElement, ref);
+		}
+
 		if (callback && typeof(callback) === "function") {
 			script.onload = callback;
 		}
-	};
+	}
+
+	/**
+	 * Loads a javascript from scriptSource
+	 *
+	 * @param scriptSource
+	 * @param callback
+	 * @returns {*}
+	 * @private
+	 */
+	function _requireJS(scriptSource, callback)
+	{
+		return _requireElement("javascript", scriptSource, callback);
+	}
+
+	/**
+	 * Loads a stylesheet from sheetSource
+	 *
+	 * @param sheetSource
+	 * @param callback
+	 * @returns {*}
+	 * @private
+	 */
+	function _requireCSS(sheetSource, callback)
+	{
+		return _requireElement("stylesheet", sheetSource, callback);
+	}
 
 	/**
 	 * a $( document ).ready({});-alike
@@ -254,14 +310,15 @@
 	 * Subfunctions and Unterfunktionen und properties:
 	 *
 	 * ajax()        -    jQuery.ajax() Equivalent (doesn't need a valid DOM node)
-	 * requireJS()   -    Inserts a script-Tag and runs an callback onload (doesn't need a valid DOM node)
-	 * docReady()    -
+	 * requireJS()   -    Inserts a script tag and runs an callback onload (doesn't need a valid DOM node)
+	 * requireCSS()  -    Inserts a link tag (css) and runs an callback onload (doesn't need a valid DOM node)
+	 * docReady()    -    jQuery.ready equicalent (
 	 * forEach()     -    go through a list of nodes
 	 * isList        -    true / false: If more than one nodes are found, this is "true" and you have to use "forEach()"
 	 *
 	 * @param selector    CSS/jQuery like Selektor (uses querySelectorAll)
 	 * @param baseObj     base node. if none is given, "document" is used
-	 * @returns {{}}
+	 * @returns {{}} | null
 	 */
 	baseObj[funcName] = function (selector, baseObj)
 	{
@@ -278,9 +335,10 @@
 		}
 
 		if (element !== null) {
-			element.ajax      = _ajax;
-			element.requireJS = _requireJS;
-			element.ready     = _docReady;
+			element.ajax       = _ajax;
+			element.requireJS  = _requireJS;
+			element.requireCSS = _requireCSS;
+			element.ready      = _docReady;
 		}
 
 		return element;
