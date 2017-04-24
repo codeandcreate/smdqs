@@ -4,11 +4,11 @@ A minimalistic javascript for the jquery babied...
 
 ## Changes
 
-some day 2015	- 1.0: 		Initial version
+some day 2015	- 1.0: 		Initial version  
+28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready  
+20.04.2017	- 2.0-testing:  dropped "isDomObject", added requireCSS  
+24.04.2017	- 2.0-testing:  avoid double adding of CSS/JS with requireCSS/-JS
 
-28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready
-
-20.04.2017	- 2.0-testing:  dropped "isDomObject", added requireCSS
 
 ## Examples
 
