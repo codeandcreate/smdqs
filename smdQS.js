@@ -203,16 +203,19 @@
 				return false;
 			}
 
+			if (callback && typeof(callback) === "function") {
+				newElement.onload = callback;
+			}
+
 			if (ref === null) {
 				window.document.querySelector("head").appendChild(newElement);
 			} else {
 				ref.parentNode.insertBefore(newElement, ref);
 			}
+		} else if (typeof(callback) === "function") {
+			callback();
 		}
 
-		if (callback && typeof(callback) === "function") {
-			script.onload = callback;
-		}
 	}
 
 	/**
