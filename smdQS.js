@@ -5,9 +5,10 @@
  * @version 2.0-testing
  * @author Matthias Weiß <m.weiss@smdigital.de>
  *
- * @changes		20150000	MW	:	- Initialversion
- *      		20170300	MW	:	- New structure and tools (docReady and loadJS)
- *              	20170420   	MW  	:	- dropped "isDomObject", added requireCSS
+ * @changes	20150000    MW	:   - Initialversion
+ *      	20170300    MW	:   - New structure and tools (docReady and requireJS)
+ *              20170420    MW  :   - dropped "isDomObject", added requireCSS
+ *              20170424    MW  :   - avoid double adding of CSS/JS with requireCSS/-JS
  *
  */
 (function(funcName, baseObj)
@@ -136,6 +137,17 @@
 	}
 
 	/**
+	 * Simple hashing function for uniq ids (_requireElement)
+	 *
+	 * @param s
+	 * @returns {*}
+	 * @private
+	 */
+	function _hashString(s) {
+		return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+	}
+
+	/**
 	 * Based on loadJS;
 	 * inserts a script tag or a link (css) tag  and executes an optional callback onload
 	 *
@@ -146,39 +158,46 @@
 	 */
 	function _requireElement(type, source, callback)
 	{
-		if (typeof source === "undefined" || typeof type === "undefined") {
+		if (
+			typeof source === "undefined" ||
+			typeof type === "undefined"
+		) {
 			return false;
 		}
 
-		"use strict";
+		if (document.querySelector("#smdQS" + _hashString(source)) !== null) {
+			"use strict";
 
-		var ref        = null;
-		var newElement = null;
+			var ref        = null;
+			var newElement = null;
 
-		switch (type) {
-			case 'javascript':
-				ref              = window.document.getElementsByTagName("script")[0];
-				newElement       = window.document.createElement("script");
-				newElement.src   = source;
-				newElement.async = true;
-				break;
-			case 'stylesheet':
-				ref             = window.document.getElementsByTagName("link")[0];
-				newElement      = window.document.createElement("link");
-				newElement.href = source;
-				newElement.type = "text/css";
-				newElement.rel  = "stylesheet";
-				break;
-		}
+			switch (type) {
+				case 'javascript':
+					ref              = window.document.getElementsByTagName("script")[0];
+					newElement       = window.document.createElement("script");
+					newElement.src   = source;
+					newElement.async = true;
+					newElement.id    = "smdQS" + _hashString(source);
+					break;
+				case 'stylesheet':
+					ref             = window.document.getElementsByTagName("link")[0];
+					newElement      = window.document.createElement("link");
+					newElement.href = source;
+					newElement.type = "text/css";
+					newElement.rel  = "stylesheet";
+					newElement.id   = "smdQS" + _hashString(source);
+					break;
+			}
 
-		if (newElement === null) {
-			return false;
-		}
+			if (newElement === null) {
+				return false;
+			}
 
-		if (ref === null) {
-			window.document.querySelector("head").appendChild(newElement);
-		} else {
-			ref.parentNode.insertBefore(newElement, ref);
+			if (ref === null) {
+				window.document.querySelector("head").appendChild(newElement);
+			} else {
+				ref.parentNode.insertBefore(newElement, ref);
+			}
 		}
 
 		if (callback && typeof(callback) === "function") {
