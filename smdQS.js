@@ -5,8 +5,8 @@
  * @version 2.0-testing
  * @author Matthias Weiß <m.weiss@smdigital.de>
  *
- * @changes	20150000    MW	:   - Initialversion
- *      	20170300    MW	:   - New structure and tools (docReady and requireJS)
+ * @changes     20150000    MW	:   - Initialversion
+ *              20170300    MW	:   - New structure and tools (docReady and requireJS)
  *              20170420    MW  :   - dropped "isDomObject", added requireCSS
  *              20170424    MW  :   - avoid double adding of CSS/JS with requireCSS/-JS
  *
@@ -139,12 +139,22 @@
 	/**
 	 * Simple hashing function for uniq ids (_requireElement)
 	 *
+	 * Source: http://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript-jquery
+	 *
 	 * @param s
 	 * @returns {*}
 	 * @private
 	 */
-	function _hashString(s) {
-		return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+	function _hashString(s)
+	{
+		var hash = 0, i, chr;
+		if (s.length === 0) return hash;
+		for (i = 0; i < s.length; i++) {
+			chr  = s.charCodeAt(i);
+			hash = ((hash << 5) - hash) + chr;
+			hash |= 0;
+		}
+		return hash;
 	}
 
 	/**
@@ -165,7 +175,7 @@
 			return false;
 		}
 
-		if (document.querySelector("#smdQS" + _hashString(source)) !== null) {
+		if (document.querySelector("#smdQS" + _hashString(source)) === null) {
 			"use strict";
 
 			var ref        = null;
