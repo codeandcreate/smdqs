@@ -9,7 +9,9 @@
  *              20170300    MW	:   - New structure and tools (docReady and requireJS)
  *              20170420    MW  :   - dropped "isDomObject", added requireCSS
  *              20170424    MW  :   - avoid double adding of CSS/JS with requireCSS/-JS
+ *              20170711    MW  :   - __requireElement now has an option to ignore if reinsert an css/js
  *
+ * @url https://github.com/schwaebischmediadigital/smdqs/tree/testing
  */
 (function(funcName, baseObj)
 {
@@ -145,7 +147,7 @@
 	 * @returns {*}
 	 * @private
 	 */
-	function _hashString(s)
+	function __hashString(s)
 	{
 		var hash = 0, i, chr;
 		if (s.length === 0) return hash;
@@ -163,10 +165,11 @@
 	 *
 	 * @param type      type of the script (stylesheet or javascript)
 	 * @param source    URL of a script
-	 * @param callback        optional callback function
+	 * @param callback  optional callback function
+	 * @param clear     drops an existing tag before (re)insert
 	 * @private
 	 */
-	function _requireElement(type, source, callback)
+	function __requireElement(type, source, callback, clear)
 	{
 		if (
 			typeof source === "undefined" ||
@@ -175,7 +178,14 @@
 			return false;
 		}
 
-		if (document.querySelector("#smdQS" + _hashString(source)) === null) {
+		var existingElement = document.querySelector("#smdQS" + __hashString(source));
+
+		if (existingElement !== null && clear === true) {
+			existingElement.parentNode.removeChild(existingElement);
+			existingElement = null;
+		}
+
+		if (existingElement === null) {
 			"use strict";
 
 			var ref        = null;
@@ -187,7 +197,7 @@
 					newElement       = window.document.createElement("script");
 					newElement.src   = source;
 					newElement.async = true;
-					newElement.id    = "smdQS" + _hashString(source);
+					newElement.id    = "smdQS" + __hashString(source);
 					break;
 				case 'stylesheet':
 					ref             = window.document.getElementsByTagName("link")[0];
@@ -195,7 +205,7 @@
 					newElement.href = source;
 					newElement.type = "text/css";
 					newElement.rel  = "stylesheet";
-					newElement.id   = "smdQS" + _hashString(source);
+					newElement.id   = "smdQS" + __hashString(source);
 					break;
 			}
 
@@ -223,12 +233,13 @@
 	 *
 	 * @param scriptSource
 	 * @param callback
+	 * @param clear
 	 * @returns {*}
 	 * @private
 	 */
-	function _requireJS(scriptSource, callback)
+	function _requireJS(scriptSource, callback, clear)
 	{
-		return _requireElement("javascript", scriptSource, callback);
+		return __requireElement("javascript", scriptSource, callback, clear);
 	}
 
 	/**
@@ -236,12 +247,13 @@
 	 *
 	 * @param sheetSource
 	 * @param callback
+	 * @param clear
 	 * @returns {*}
 	 * @private
 	 */
-	function _requireCSS(sheetSource, callback)
+	function _requireCSS(sheetSource, callback, clear)
 	{
-		return _requireElement("stylesheet", sheetSource, callback);
+		return __requireElement("stylesheet", sheetSource, callback, clear);
 	}
 
 	/**
