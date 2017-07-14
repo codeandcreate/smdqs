@@ -1,6 +1,6 @@
 # smdQS
-A minimalistic javascript for the jquery babied...
-
+A minimalistic javascript for the jquery babied...  
+It uses querySelectorAll or getElementById to get a DOM-Node.
 
 ## Changes
 
@@ -8,16 +8,25 @@ some day 2015	- 1.0: 		Initial version
 28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready  
 20.04.2017	- 2.0-testing:  dropped "isDomObject", added requireCSS  
 24.04.2017	- 2.0-testing:  avoid double adding of CSS/JS with requireCSS/-JS  
-11.07.2017	- 2.0-testing:	__requireElement now has an option to ignore if reinsert an css/js
+11.07.2017	- 2.0-testing:	requireElement now has an option to ignore if reinsert an css/js  
+14.07.2017	- 2.0-testing:	errorHandler for ajax() and optimizing  
 
 
 ## Examples
 
 - ajax() call:
 ``` js
-smdQS().ajax("/testscript.php", function( returnData ) {
-	console.log(returnData);					
-}
+smdQS().ajax({
+	url:		"/testscript.php", 		//required
+	method:		"GET"
+	data:		{}
+	callback:	function( returnData ) {	//required
+				console.log(returnData);					
+			},
+	errorCallback:	function( XMLHttpRequest ) {
+				console.log(XMLHttpRequest);
+			}
+});	
 ```
 
 - ready() - Execute something on document ready:
