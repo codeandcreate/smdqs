@@ -18,8 +18,8 @@ some day 2015	- 1.0: 		Initial version
 ``` js
 smdQS().ajax({
 	url:		"/testscript.php", 		//required
-	method:		"GET"
-	data:		{}
+	method:		"GET",
+	data:		{},
 	callback:	function( returnData ) {	//required
 				console.log(returnData);					
 			},
