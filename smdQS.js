@@ -332,6 +332,7 @@
 
 		//var domObjects = baseObj.querySelectorAll(selector);
 		if (typeof domObjects === "object" && domObjects !== null) {
+			element.isList = false;
 			if (!_usesQS) {
 				element        = domObjects;
 			} else if (domObjects.length === 1) {
@@ -357,6 +358,8 @@
 			} else {
 				element = null;
 			}
+		} else {
+			element = null;
 		}
 		return element;
 	}
@@ -379,9 +382,7 @@
 	 */
 	baseObj[funcName] = function (selector, baseObj)
 	{
-		var element = {
-			isList: false
-		};
+		var element = {};
 
 		if (!__init) {
 			_smdQSinitHtmLElements();
