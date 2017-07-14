@@ -10,6 +10,7 @@
  *              20170420    MW  :   - dropped "isDomObject", added requireCSS
  *              20170424    MW  :   - avoid double adding of CSS/JS with requireCSS/-JS
  *              20170711    MW  :   - __requireElement now has an option to ignore if reinsert an css/js
+ *              20170714    MW  :   - errorHandler for ajax() and optimizing
  *
  * @url https://github.com/schwaebischmediadigital/smdqs/tree/testing
  */
@@ -75,17 +76,18 @@
 	 * @param method        GET (default), POST, PUT, DELETE
 	 * @private
 	 */
-	function _ajax(url, callback, data, method)
+	function _ajax(urlOrObject, callback, data, method)
 	{
-		if (typeof url === "object") {
-			var ajaxCallObject = url;
-			url                = ajaxCallObject.url || undefined;
-			callback           = ajaxCallObject.callback || undefined;
-			data               = ajaxCallObject.data || "";
-			method             = ajaxCallObject.method || "GET";
+		var errorCallback;
+		if (typeof urlOrObject === "object") {
+			data               = urlOrObject.data || "";
+			method             = urlOrObject.method || "GET";
+			callback           = urlOrObject.callback || undefined;
+			errorCallback      = urlOrObject.errorCallback || undefined;
+			urlOrObject        = urlOrObject.url || undefined;
 		}
 
-		if (typeof url === "undefined" || typeof callback === "undefined") {
+		if (typeof urlOrObject === "undefined" || typeof callback === "undefined") {
 			return false;
 		}
 
@@ -100,10 +102,10 @@
 		if (xmlHttp !== null) {
 			function readyStateHandler(e)
 			{
-				if (xmlHttp.readyState === 4) {
-					if (xmlHttp.status === 200 || xmlHttp.status === 201) {
-						callback(xmlHttp.responseText);
-					}
+				if (xmlHttp.readyState === 4 && (xmlHttp.status === 200 || xmlHttp.status === 201)) {
+					callback(xmlHttp.responseText);
+				} else if (typeof errorCallback === "function") {
+					errorCallback(xmlHttp);
 				}
 			}
 
@@ -125,16 +127,17 @@
 			}
 
 			if (method === "POST" || method === "PUT" || method === "DELETE") {
-				xmlHttp.open(method, url, true);
+				xmlHttp.open(method, urlOrObject, true);
 				xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 				xmlHttp.send(data);
 			} else {
 				if (data !== "") {
 					data = "?" + data;
 				}
-				xmlHttp.open("GET", url + data, true);
+				xmlHttp.open("GET", urlOrObject + data, true);
 				xmlHttp.send();
 			}
+			return true;
 		}
 	}
 
@@ -318,11 +321,21 @@
 			baseObj = document;
 		}
 
-		var domObjects = baseObj.querySelectorAll(selector);
+		var domObjects, _usesQS = true;
+
+		if (selector.substr(0,1) === "#" && selector.indexOf(" ") === -1 && selector.indexOf(".") === -1) {
+			_usesQS = false;
+			domObjects = baseObj.getElementById(selector.substr(1));
+		} else {
+			domObjects = baseObj.querySelectorAll(selector);
+		}
+
+		//var domObjects = baseObj.querySelectorAll(selector);
 		if (typeof domObjects === "object" && domObjects !== null) {
-			if (domObjects.length === 1) {
+			if (!_usesQS) {
+				element        = domObjects;
+			} else if (domObjects.length === 1) {
 				element        = domObjects[0];
-				element.isList = false;
 			} else if (domObjects.length > 0) {
 				var nodeList   = {};
 				nodeList.items = domObjects;
@@ -366,7 +379,9 @@
 	 */
 	baseObj[funcName] = function (selector, baseObj)
 	{
-		var element = {};
+		var element = {
+			isList: false
+		};
 
 		if (!__init) {
 			_smdQSinitHtmLElements();
@@ -374,8 +389,7 @@
 		}
 
 		if (selector !== "" && selector !== null && typeof selector === "string") {
-			element.isList = false;
-			element        = _smdQSMain(selector, baseObj, element);
+			element = _smdQSMain(selector, baseObj, element);
 		}
 
 		if (element !== null) {
