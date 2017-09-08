@@ -5,12 +5,13 @@
  * @version 2.0-testing
  * @author Matthias Weiß <m.weiss@smdigital.de>
  *
- * @changes     20150000    MW	:   - Initialversion
- *              20170300    MW	:   - New structure and tools (docReady and requireJS)
+ * @changes     20150000    MW	:   - initialversion
+ *              20170300    MW	:   - new structure and tools (docReady and requireJS)
  *              20170420    MW  :   - dropped "isDomObject", added requireCSS
  *              20170424    MW  :   - avoid double adding of CSS/JS with requireCSS/-JS
  *              20170711    MW  :   - __requireElement now has an option to ignore if reinsert an css/js
  *              20170714    MW  :   - errorHandler for ajax() and optimizing
+ *              20170908    MW  :   - support for using .ajax() inside a Android/iOS app with native os interface
  *
  * @url https://github.com/schwaebischmediadigital/smdqs/tree/testing
  */
@@ -79,11 +80,14 @@
 	function _ajax(urlOrObject, callback, data, method)
 	{
 		var errorCallback;
+		var headers;
+
 		if (typeof urlOrObject === "object") {
 			data               = urlOrObject.data || "";
 			method             = urlOrObject.method || "GET";
 			callback           = urlOrObject.callback || undefined;
 			errorCallback      = urlOrObject.errorCallback || undefined;
+			headers            = urlOrObject.headers || undefined;
 			urlOrObject        = urlOrObject.url || undefined;
 		}
 
@@ -91,54 +95,72 @@
 			return false;
 		}
 
-		var xmlHttp = null;
-
-		if (window.XMLHttpRequest) {
-			xmlHttp = new XMLHttpRequest();
-		} else if (window.ActiveXObject) {
-			xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-		}
-
-		if (xmlHttp !== null) {
-			function readyStateHandler(e)
-			{
-				if (xmlHttp.readyState === 4 && (xmlHttp.status === 200 || xmlHttp.status === 201)) {
-					callback(xmlHttp.responseText);
-				} else if (typeof errorCallback === "function") {
-					errorCallback(xmlHttp);
-				}
-			}
-
-			xmlHttp.onload = readyStateHandler;
-
-			if (typeof data === "undefined") {
-				data = "";
-			}
-			if (method !== "GET" && method !== "POST") {
-				method = "GET";
-			}
-
-			if (typeof data === "object") {
-				var dataObject = data;
-				data           = "";
-				for (var key in dataObject) {
-					data = data + "&" + key + "=" + encodeURIComponent(dataObject[key]);
-				}
-			}
-
-			if (method === "POST" || method === "PUT" || method === "DELETE") {
-				xmlHttp.open(method, urlOrObject, true);
-				xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-				xmlHttp.send(data);
-			} else {
-				if (data !== "") {
-					data = "?" + data;
-				}
-				xmlHttp.open("GET", urlOrObject + data, true);
-				xmlHttp.send();
-			}
+		if (typeof nativeOS !== "undefined") {
+			callback(nativeOS.ajax(
+				JSON.stringify({data: data, method: method, headers: headers, url: urlOrObject})
+			));
 			return true;
+		} else {
+			var xmlHttp = null;
+
+			if (window.XMLHttpRequest) {
+				xmlHttp = new XMLHttpRequest();
+			} else if (window.ActiveXObject) {
+				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+
+			if (xmlHttp !== null) {
+				function readyStateHandler(e)
+				{
+					if (xmlHttp.readyState === 4 && (xmlHttp.status === 200 || xmlHttp.status === 201)) {
+						callback(xmlHttp.responseText);
+					} else if (typeof errorCallback === "function") {
+						errorCallback(xmlHttp);
+					}
+				}
+
+				xmlHttp.onload = readyStateHandler;
+
+				if (typeof data === "undefined") {
+					data = "";
+				}
+				if (method !== "GET" && method !== "POST") {
+					method = "GET";
+				}
+
+				if (typeof data === "object") {
+					var dataObject = data;
+					data           = "";
+					for (var key in dataObject) {
+						data = data + "&" + key + "=" + encodeURIComponent(dataObject[key]);
+					}
+				}
+
+				if (method === "POST" || method === "PUT" || method === "DELETE") {
+					xmlHttp.open(method, urlOrObject, true);
+					xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+					if (typeof headers === "object") {
+						for (var i in headers) {
+							xmlHttp.setRequestHeader(i, headers[i]);
+						}
+					}
+					xmlHttp.send(data);
+				} else {
+					if (data !== "") {
+						data = "?" + data;
+					}
+					xmlHttp.open("GET", urlOrObject + data, true);
+					if (typeof headers === "object") {
+						for (var i in headers) {
+							xmlHttp.setRequestHeader(i, headers[i]);
+						}
+					}
+					xmlHttp.send();
+				}
+				return true;
+			}
 		}
+		return false;
 	}
 
 	/**
@@ -330,7 +352,6 @@
 			domObjects = baseObj.querySelectorAll(selector);
 		}
 
-		//var domObjects = baseObj.querySelectorAll(selector);
 		if (typeof domObjects === "object" && domObjects !== null) {
 			element.isList = false;
 			if (!_usesQS) {
