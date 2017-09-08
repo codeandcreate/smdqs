@@ -4,13 +4,15 @@ It uses querySelectorAll or getElementById to get a DOM-Node.
 
 ## Changes
 
-some day 2015	- 1.0: 		Initial version  
-28.02.2017 	- 2.0-testing:	new structure and two new functions: requreJS and ready  
-20.04.2017	- 2.0-testing:  dropped "isDomObject", added requireCSS  
-24.04.2017	- 2.0-testing:  avoid double adding of CSS/JS with requireCSS/-JS  
-11.07.2017	- 2.0-testing:	requireElement now has an option to ignore if reinsert an css/js  
-14.07.2017	- 2.0-testing:	errorHandler for ajax() and optimizing  
-
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Version&nbsp;&nbsp;&nbsp;| Info |
+|---|---|---|
+| some day 2015 | 1.0 | initial version |
+| 28.02.2017 | 2.0-testing | new structure and two new functions: requreJS and ready   |
+| 20.04.2017 | 2.0-testing | dropped "isDomObject", added requireCSS |
+| 24.04.2017 | 2.0-testing | avoid double adding of CSS/JS with requireCSS/-JS |
+| 11.07.2017 | 2.0-testing | requireElement now has an option to ignore if reinsert an css/js |
+| 14.07.2017 | 2.0-testing | errorHandler for ajax() and optimizing |
+| 08.09.2017 | 2.0-testing | support for using .ajax() inside a Android/iOS app with native os interface |
 
 ## Examples
 
@@ -73,6 +75,22 @@ if (aListOfNodes !== null && aListOfNodes.isList) {
 } 
 ```
 
+## nativeOS Interface
+
+smdQS().ajax() detects if there is a native interface available and uses it. The interface must be implemented with following specs:
+
+- nativeOS must be callable from Javascript
+- nativeOS.ajax() must be callable with a string as first param contains a JSON.stringify()-ed object with following content:
+``` js
+{
+  data: "...", 
+  method: "...", 
+  headers: "...", 
+  url: "..."
+}
+```
+
+## Misc
 
 This version includes a forked version of docReady (https://github.com/jfriend00/docReady)
 
