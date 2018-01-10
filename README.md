@@ -13,6 +13,9 @@ It uses querySelectorAll or getElementById to get a DOM-Node.
 | 11.07.2017 | 2.0-testing | requireElement now has an option to ignore if reinsert an css/js |
 | 14.07.2017 | 2.0-testing | errorHandler for ajax() and optimizing |
 | 08.09.2017 | 2.0-testing | support for using .ajax() inside a Android/iOS app with native os interface |
+| 04.11.2017 | 2.0-testing | smdQS_jsHost |
+| 24.11.2017 | 2.0-testing | edited nativeOS workflow |
+| 09.01.2018 | 2.0-testing | withCredentials added to .ajax() |
 
 ## Examples
 
@@ -87,8 +90,20 @@ smdQS().ajax() detects if there is a native interface available and uses it. The
   method: "...", 
   headers: "...", 
   url: "..."
+  callback: function() {
+    //...
+  },
+  errorCallback: function() {
+    //...
+  }
 }
 ```
+
+(see nativeOS_example_for_iOS.js)
+
+## smdQS_jsHost
+
+If the javascript variable smdQS_jsHost is set, smdQS().ajax() uses it as hostname to call all requests to. If a url has already a hostname the variable is ignored.
 
 ## Misc
 
