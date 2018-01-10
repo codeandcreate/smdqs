@@ -12,6 +12,9 @@
  *              20170711    MW  :   - __requireElement now has an option to ignore if reinsert an css/js
  *              20170714    MW  :   - errorHandler for ajax() and optimizing
  *              20170908    MW  :   - support for using .ajax() inside a Android/iOS app with native os interface
+ *              20171004    MW  :   - smdQS_jsHost
+ *              2o171124    MW  :   - edited nativeOS workflow
+ *              20180109    MW  :   - withCredentials added to .ajax()
  *
  * @url https://github.com/schwaebischmediadigital/smdqs/tree/testing
  */
@@ -79,8 +82,7 @@
 	 */
 	function _ajax(urlOrObject, callback, data, method)
 	{
-		var errorCallback;
-		var headers;
+		var errorCallback, headers, withCredentials;
 
 		if (typeof urlOrObject === "object") {
 			data               = urlOrObject.data || "";
@@ -88,6 +90,8 @@
 			callback           = urlOrObject.callback || undefined;
 			errorCallback      = urlOrObject.errorCallback || undefined;
 			headers            = urlOrObject.headers || undefined;
+			withCredentials    = urlOrObject.withCredentials || undefined;
+
 			urlOrObject        = urlOrObject.url || undefined;
 		}
 
@@ -95,16 +99,28 @@
 			return false;
 		}
 
-		if (typeof nativeOS !== "undefined") {
-			callback(nativeOS.ajax(
-				JSON.stringify({data: data, method: method, headers: headers, url: urlOrObject})
-			));
+		if (typeof nativeOS !== "undefined" && typeof nativeOS.ajax !== "undefined") {
+			nativeOS.ajax({
+				data: data,
+				method: method,
+				headers: headers,
+				url: urlOrObject,
+				callback: callback,
+				errorCallback: errorCallback
+			});
 			return true;
 		} else {
 			var xmlHttp = null;
 
+			if (typeof window.smdQS_jsHost !== "undefined" && urlOrObject.indexOf("://") === -1) {
+				urlOrObject = window.smdQS_jsHost + urlOrObject;
+			}
+
 			if (window.XMLHttpRequest) {
 				xmlHttp = new XMLHttpRequest();
+				if (withCredentials === true) {
+					xmlHttp.withCredentials = true;
+				}
 			} else if (window.ActiveXObject) {
 				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
 			}
@@ -201,6 +217,10 @@
 			typeof type === "undefined"
 		) {
 			return false;
+		}
+
+		if (typeof window.smdQS_jsHost !== "undefined" && source.indexOf("://") === -1) {
+			source = window.smdQS_jsHost + source;
 		}
 
 		var existingElement = document.querySelector("#smdQS" + __hashString(source));
