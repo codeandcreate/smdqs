@@ -4,7 +4,7 @@
  * It generates an special designed link and adds the callback function to the window-object,
  * so it can be called from a native part of an app.
  *
- * @type {{ajax: nativeOS.ajax, userSettings: nativeOS.userSettings}}
+ * @type {{ajax: nativeOS.ajax}}
  */
 var nativeOS = {
 	_hash                    : function (s)
