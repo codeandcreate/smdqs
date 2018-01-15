@@ -1,26 +1,14 @@
 /**
+ * sQS - A minimalistic javascript object for the jquery babied
  *
- * smdQS - A minimalistic javascript object for the jquery babied
+ * @version 1.0 - based on sQS 2.0
+ * @author Matthias Weiß <info@codeandcreate.de>
  *
- * @version 2.0-testing
- * @author Matthias Weiß <m.weiss@smdigital.de>
- *
- * @changes     20150000    MW	:   - initialversion
- *              20170300    MW	:   - new structure and tools (docReady and requireJS)
- *              20170420    MW  :   - dropped "isDomObject", added requireCSS
- *              20170424    MW  :   - avoid double adding of CSS/JS with requireCSS/-JS
- *              20170711    MW  :   - __requireElement now has an option to ignore if reinsert an css/js
- *              20170714    MW  :   - errorHandler for ajax() and optimizing
- *              20170908    MW  :   - support for using .ajax() inside a Android/iOS app with native os interface
- *              20171004    MW  :   - smdQS_jsHost
- *              2o171124    MW  :   - edited nativeOS workflow
- *              20180109    MW  :   - withCredentials added to .ajax()
- *
- * @url https://github.com/schwaebischmediadigital/smdqs/tree/testing
+ * @url https://github.com/codeandcreate/sQS
  */
 (function(funcName, baseObj)
 {
-	funcName = funcName || "smdQS";
+	funcName = funcName || "sQS";
 	baseObj  = baseObj || window;
 
 	var __init                        = false;
@@ -33,7 +21,7 @@
 	 *
 	 * @private
 	 */
-	function _smdQSinitHtmLElements()
+	function _sQSinitHtmLElements()
 	{
 		var elementPrototype = typeof HTMLElement !== "undefined" ? HTMLElement.prototype : (typeof Element !== "undefined" ? Element.prototype : null);
 
@@ -99,82 +87,66 @@
 			return false;
 		}
 
-		if (typeof nativeOS !== "undefined" && typeof nativeOS.ajax !== "undefined") {
-			nativeOS.ajax({
-				data: data,
-				method: method,
-				headers: headers,
-				url: urlOrObject,
-				callback: callback,
-				errorCallback: errorCallback
-			});
+		var xmlHttp = null;
+
+		if (typeof window.sQS_jsHost !== "undefined" && urlOrObject.indexOf("://") === -1) {
+			urlOrObject = window.sQS_jsHost + urlOrObject;
+		}
+
+		xmlHttp = new XMLHttpRequest();
+		if (withCredentials === true) {
+			xmlHttp.withCredentials = true;
+		}
+
+		if (xmlHttp !== null) {
+			function readyStateHandler(e)
+			{
+				if (xmlHttp.readyState === 4 && (xmlHttp.status === 200 || xmlHttp.status === 201)) {
+					callback(xmlHttp.responseText);
+				} else if (typeof errorCallback === "function") {
+					errorCallback(xmlHttp);
+				}
+			}
+
+			xmlHttp.onload = readyStateHandler;
+
+			if (typeof data === "undefined") {
+				data = "";
+			}
+			if (method !== "GET" && method !== "POST") {
+				method = "GET";
+			}
+
+			if (typeof data === "object") {
+				var dataObject = data;
+				data           = "";
+				for (var key in dataObject) {
+					data = data + "&" + key + "=" + encodeURIComponent(dataObject[key]);
+				}
+			}
+
+			if (method === "POST" || method === "PUT" || method === "DELETE") {
+				xmlHttp.open(method, urlOrObject, true);
+				xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				if (typeof headers === "object") {
+					for (var i in headers) {
+						xmlHttp.setRequestHeader(i, headers[i]);
+					}
+				}
+				xmlHttp.send(data);
+			} else {
+				if (data !== "") {
+					data = "?" + data;
+				}
+				xmlHttp.open("GET", urlOrObject + data, true);
+				if (typeof headers === "object") {
+					for (var i in headers) {
+						xmlHttp.setRequestHeader(i, headers[i]);
+					}
+				}
+				xmlHttp.send();
+			}
 			return true;
-		} else {
-			var xmlHttp = null;
-
-			if (typeof window.smdQS_jsHost !== "undefined" && urlOrObject.indexOf("://") === -1) {
-				urlOrObject = window.smdQS_jsHost + urlOrObject;
-			}
-
-			if (window.XMLHttpRequest) {
-				xmlHttp = new XMLHttpRequest();
-				if (withCredentials === true) {
-					xmlHttp.withCredentials = true;
-				}
-			} else if (window.ActiveXObject) {
-				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-			}
-
-			if (xmlHttp !== null) {
-				function readyStateHandler(e)
-				{
-					if (xmlHttp.readyState === 4 && (xmlHttp.status === 200 || xmlHttp.status === 201)) {
-						callback(xmlHttp.responseText);
-					} else if (typeof errorCallback === "function") {
-						errorCallback(xmlHttp);
-					}
-				}
-
-				xmlHttp.onload = readyStateHandler;
-
-				if (typeof data === "undefined") {
-					data = "";
-				}
-				if (method !== "GET" && method !== "POST") {
-					method = "GET";
-				}
-
-				if (typeof data === "object") {
-					var dataObject = data;
-					data           = "";
-					for (var key in dataObject) {
-						data = data + "&" + key + "=" + encodeURIComponent(dataObject[key]);
-					}
-				}
-
-				if (method === "POST" || method === "PUT" || method === "DELETE") {
-					xmlHttp.open(method, urlOrObject, true);
-					xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-					if (typeof headers === "object") {
-						for (var i in headers) {
-							xmlHttp.setRequestHeader(i, headers[i]);
-						}
-					}
-					xmlHttp.send(data);
-				} else {
-					if (data !== "") {
-						data = "?" + data;
-					}
-					xmlHttp.open("GET", urlOrObject + data, true);
-					if (typeof headers === "object") {
-						for (var i in headers) {
-							xmlHttp.setRequestHeader(i, headers[i]);
-						}
-					}
-					xmlHttp.send();
-				}
-				return true;
-			}
 		}
 		return false;
 	}
@@ -219,11 +191,11 @@
 			return false;
 		}
 
-		if (typeof window.smdQS_jsHost !== "undefined" && source.indexOf("://") === -1) {
-			source = window.smdQS_jsHost + source;
+		if (typeof window.sQS_jsHost !== "undefined" && source.indexOf("://") === -1) {
+			source = window.sQS_jsHost + source;
 		}
 
-		var existingElement = document.querySelector("#smdQS" + __hashString(source));
+		var existingElement = document.querySelector("#sQS" + __hashString(source));
 
 		if (existingElement !== null && clear === true) {
 			existingElement.parentNode.removeChild(existingElement);
@@ -242,7 +214,7 @@
 					newElement       = window.document.createElement("script");
 					newElement.src   = source;
 					newElement.async = true;
-					newElement.id    = "smdQS" + __hashString(source);
+					newElement.id    = "sQS" + __hashString(source);
 					break;
 				case 'stylesheet':
 					ref             = window.document.getElementsByTagName("link")[0];
@@ -250,7 +222,7 @@
 					newElement.href = source;
 					newElement.type = "text/css";
 					newElement.rel  = "stylesheet";
-					newElement.id   = "smdQS" + __hashString(source);
+					newElement.id   = "sQS" + __hashString(source);
 					break;
 			}
 
@@ -357,7 +329,7 @@
 	/**
 	 * Main function that returns one ore more DOM Objects
 	 */
-	function _smdQSMain(selector, baseObj, element)
+	function _sQSMain(selector, baseObj, element)
 	{
 		if (!baseObj || typeof baseObj === "undefined" || typeof baseObj.querySelectorAll === "undefined") {
 			baseObj = document;
@@ -406,7 +378,7 @@
 	}
 
 	/**
-	 * smdQS
+	 * sQS
 	 *
 	 * Subfunctions and Unterfunktionen und properties:
 	 *
@@ -426,12 +398,12 @@
 		var element = {};
 
 		if (!__init) {
-			_smdQSinitHtmLElements();
+			_sQSinitHtmLElements();
 			__init = true;
 		}
 
 		if (selector !== "" && selector !== null && typeof selector === "string") {
-			element = _smdQSMain(selector, baseObj, element);
+			element = _sQSMain(selector, baseObj, element);
 		}
 
 		if (element !== null) {
@@ -443,4 +415,4 @@
 
 		return element;
 	}
-})("smdQS", window);
+})("sQS", window);
