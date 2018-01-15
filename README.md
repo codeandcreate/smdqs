@@ -1,5 +1,6 @@
 # sQS
 A minimalistic javascript for the jquery babied... 
+
 It uses querySelectorAll or getElementById to get a DOM-Node.
 
 ## Changes
@@ -76,6 +77,7 @@ If the javascript variable sQS_jsHost is set, sQS().ajax() uses it as hostname t
 ## Misc
 
 It's a fork of (https://github.com/jfriend00/docReady)
+
 This version includes a forked version of docReady (https://github.com/jfriend00/docReady)
 
 Matthias Weiß
