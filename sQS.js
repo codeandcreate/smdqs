@@ -11,53 +11,9 @@
 	funcName = funcName || "sQS";
 	baseObj  = baseObj || window;
 
-	var __init                        = false;
 	var __readyList                   = [];
 	var __readyFired                  = false;
 	var __readyEventHandlersInstalled = false;
-
-	/**
-	 * Initializer for prototype funktions hasClass, addClass, removeClass, toggleClass
-	 *
-	 * @private
-	 */
-	function _sQSinitHtmLElements()
-	{
-		var elementPrototype = typeof HTMLElement !== "undefined" ? HTMLElement.prototype : (typeof Element !== "undefined" ? Element.prototype : null);
-
-		if (elementPrototype !== null) {
-			elementPrototype.removeClass = function (remove)
-			{
-				var newClassName = "";
-				var i;
-				var classes      = this.className.split(" ");
-				for (i = 0; i < classes.length; i++) {
-					if (classes[i] !== remove) {
-						newClassName += classes[i] + " ";
-					}
-				}
-				this.className = newClassName.trim();
-			};
-			elementPrototype.addClass    = function (add)
-			{
-				if (this.className.indexOf(add) === -1) {
-					this.className = this.className + " " + add;
-				}
-			};
-			elementPrototype.toggleClass = function (toggle)
-			{
-				if (this.className.indexOf(toggle) === -1) {
-					this.addClass(toggle);
-				} else {
-					this.removeClass(toggle);
-				}
-			};
-			elementPrototype.hasClass    = function (classToCheck)
-			{
-				return (this.className.indexOf(classToCheck) !== -1);
-			};
-		}
-	}
 
 	/**
 	 * jQuery.ajax() Equivalent
@@ -396,11 +352,6 @@
 	baseObj[funcName] = function (selector, baseObj)
 	{
 		var element = {};
-
-		if (!__init) {
-			_sQSinitHtmLElements();
-			__init = true;
-		}
 
 		if (selector !== "" && selector !== null && typeof selector === "string") {
 			element = _sQSMain(selector, baseObj, element);

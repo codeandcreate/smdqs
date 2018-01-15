@@ -47,14 +47,6 @@ sQS().requireCSS("/css/somecssfile.css", function() {
 }
 ```
 
-- working with classes and selectors:
-``` js
-var myNode = sQS("#idOfMyNode");
-if (myNode.hasClass("aNiceClass")) {
-	myNode.removeClass("aNiceClass");
-}
-```
-
 - working with lists of nodes:
 ``` js
 var aListOfNodes = sQS(".btn");
