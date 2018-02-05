@@ -6,8 +6,8 @@
  * @version 2.0-testing
  * @author Matthias Weiß <m.weiss@smdigital.de>
  *
- * @changes     20150000    MW	:   - initialversion
- *              20170300    MW	:   - new structure and tools (docReady and requireJS)
+ * @changes     20150000    MW    :   - initialversion
+ *              20170300    MW    :   - new structure and tools (docReady and requireJS)
  *              20170420    MW  :   - dropped "isDomObject", added requireCSS
  *              20170424    MW  :   - avoid double adding of CSS/JS with requireCSS/-JS
  *              20170711    MW  :   - __requireElement now has an option to ignore if reinsert an css/js
@@ -20,7 +20,7 @@
  *
  * @url https://github.com/schwaebischmediadigital/smdqs/tree/testing
  */
-(function(funcName, baseObj)
+(function (funcName, baseObj)
 {
 	funcName = funcName || "smdQS";
 	baseObj  = baseObj || window;
@@ -87,14 +87,14 @@
 		var errorCallback, headers, withCredentials;
 
 		if (typeof urlOrObject === "object") {
-			data               = urlOrObject.data || "";
-			method             = urlOrObject.method || "GET";
-			callback           = urlOrObject.callback || undefined;
-			errorCallback      = urlOrObject.errorCallback || undefined;
-			headers            = urlOrObject.headers || undefined;
-			withCredentials    = urlOrObject.withCredentials || undefined;
+			data            = urlOrObject.data || "";
+			method          = urlOrObject.method || "GET";
+			callback        = urlOrObject.callback || undefined;
+			errorCallback   = urlOrObject.errorCallback || undefined;
+			headers         = urlOrObject.headers || undefined;
+			withCredentials = urlOrObject.withCredentials || undefined;
 
-			urlOrObject        = urlOrObject.url || undefined;
+			urlOrObject = urlOrObject.url || undefined;
 		}
 
 		if (typeof urlOrObject === "undefined" || typeof callback === "undefined") {
@@ -103,11 +103,11 @@
 
 		if (typeof nativeOS !== "undefined" && typeof nativeOS.ajax !== "undefined") {
 			nativeOS.ajax({
-				data: data,
-				method: method,
-				headers: headers,
-				url: urlOrObject,
-				callback: callback,
+				data         : data,
+				method       : method,
+				headers      : headers,
+				url          : urlOrObject,
+				callback     : callback,
 				errorCallback: errorCallback
 			});
 			return true;
@@ -193,7 +193,9 @@
 	function __hashString(s)
 	{
 		var hash = 0, i, chr;
-		if (s.length === 0) return hash;
+		if (s.length === 0) {
+			return hash;
+		}
 		for (i = 0; i < s.length; i++) {
 			chr  = s.charCodeAt(i);
 			hash = ((hash << 5) - hash) + chr;
@@ -313,7 +315,10 @@
 	function _docReady(callback, context)
 	{
 		if (__readyFired) {
-			setTimeout(function () {callback(context);}, 1);
+			setTimeout(function ()
+			{
+				callback(context);
+			}, 1);
 			return;
 		} else {
 			__readyList.push({fn: callback, ctx: context});
@@ -367,43 +372,46 @@
 
 		var domObjects, _usesQS = true;
 
-		if (selector.substr(0,1) === "#" && selector.indexOf(" ") === -1 && selector.indexOf(".") === -1) {
-			_usesQS = false;
+		if (selector.substr(0, 1) === "#" && selector.indexOf(" ") === -1 && selector.indexOf(".") === -1) {
+			_usesQS    = false;
 			domObjects = baseObj.getElementById(selector.substr(1));
 		} else {
 			domObjects = baseObj.querySelectorAll(selector);
 		}
 
 		if (typeof domObjects === "object" && domObjects !== null) {
-			element.isList = false;
 			if (!_usesQS) {
-				element        = domObjects;
+				element         = domObjects;
+				element.items   = [domObjects];
+				element.isList  = false;
 			} else if (domObjects.length === 1) {
-				element        = domObjects[0];
+				element         = domObjects[0];
+				element.items   = [domObjects[0]];
+				element.isList  = false;
 			} else if (domObjects.length > 0) {
-				var nodeList   = {};
-				nodeList.items = domObjects;
-
-				/**
-				 * function, to go through all found nodes
-				 *
-				 * @param callback
-				 * @param scope
-				 */
-				nodeList.forEach = function (callback, scope)
-				{
-					for (var i = 0; i < this.items.length; i++) {
-						callback.call(scope, i, this.items[i]); // passes back stuff we need
-					}
-				};
-				element        = nodeList;
-				element.isList = true;
+				element         = {};
+				element.items   = domObjects;
+				element.isList  = true;
 			} else {
-				element = null;
+				return null;
 			}
+
+			/**
+			 * Wraps forEach for all types of returns
+			 *
+			 * @param callback
+			 * @param scope
+			 */
+			element.forEach = function(callback, scope)
+			{
+				this.items.forEach(function(element, index, array) {
+					callback.call(scope, element, index, array);
+				});
+			};
 		} else {
-			element = null;
+			return null;
 		}
+
 		return element;
 	}
 
