@@ -2,6 +2,7 @@
  *
  * smdQS - A minimalistic javascript object for the jquery babied
  *
+ * @function smdQS
  * @version 2.0-testing
  * @author Matthias Weiß <m.weiss@smdigital.de>
  *
@@ -13,8 +14,9 @@
  *              20170714    MW  :   - errorHandler for ajax() and optimizing
  *              20170908    MW  :   - support for using .ajax() inside a Android/iOS app with native os interface
  *              20171004    MW  :   - smdQS_jsHost
- *              2o171124    MW  :   - edited nativeOS workflow
+ *              20171124    MW  :   - edited nativeOS workflow
  *              20180109    MW  :   - withCredentials added to .ajax()
+ *              20180105    MW  :   - clean up
  *
  * @url https://github.com/schwaebischmediadigital/smdqs/tree/testing
  */
@@ -74,7 +76,7 @@
 	/**
 	 * jQuery.ajax() Equivalent
 	 *
-	 * @param url           URL which will be called (without GET params!)
+	 * @param urlOrObject   URL which will be called (without GET params!)
 	 * @param callback      Callback function, that gets the responseText if status 200 or 201 is returned
 	 * @param data          data as array or string (...=...&...=...)
 	 * @param method        GET (default), POST, PUT, DELETE
@@ -126,7 +128,7 @@
 			}
 
 			if (xmlHttp !== null) {
-				function readyStateHandler(e)
+				function readyStateHandler()
 				{
 					if (xmlHttp.readyState === 4 && (xmlHttp.status === 200 || xmlHttp.status === 201)) {
 						callback(xmlHttp.responseText);
