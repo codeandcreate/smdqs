@@ -1,10 +1,10 @@
 /**
  * sQS - A minimalistic javascript object for the jquery babied
  *
- * @version 1.0 - based on sQS 2.0
+ * @version 1.0 - based on smdQS 2.0
  * @author Matthias Weiß <info@codeandcreate.de>
  *
- * @url https://github.com/codeandcreate/sQS
+ * @url https://github.com/codeandcreate/smdQS
  */
 (function(funcName, baseObj)
 {
@@ -295,40 +295,42 @@
 
 		if (selector.substr(0,1) === "#" && selector.indexOf(" ") === -1 && selector.indexOf(".") === -1) {
 			_usesQS = false;
-			domObjects = baseObj.getElementById(selector.substr(1));
+			domObjects = document.getElementById(selector.substr(1));
 		} else {
 			domObjects = baseObj.querySelectorAll(selector);
 		}
 
 		if (typeof domObjects === "object" && domObjects !== null) {
-			element.isList = false;
 			if (!_usesQS) {
-				element        = domObjects;
+				element         = domObjects;
+				element.items   = [domObjects];
+				element.isList  = false;
 			} else if (domObjects.length === 1) {
-				element        = domObjects[0];
+				element         = domObjects[0];
+				element.items   = [domObjects[0]];
+				element.isList  = false;
 			} else if (domObjects.length > 0) {
-				var nodeList   = {};
-				nodeList.items = domObjects;
-
-				/**
-				 * function, to go through all found nodes
-				 *
-				 * @param callback
-				 * @param scope
-				 */
-				nodeList.forEach = function (callback, scope)
-				{
-					for (var i = 0; i < this.items.length; i++) {
-						callback.call(scope, i, this.items[i]); // passes back stuff we need
-					}
-				};
-				element        = nodeList;
-				element.isList = true;
+				element         = {};
+				element.items   = domObjects;
+				element.isList  = true;
 			} else {
-				element = null;
+				return null;
 			}
+
+			/**
+			 * Wraps forEach for all types of returns
+			 *
+			 * @param callback
+			 * @param scope
+			 */
+			element.forEach = function(callback, scope)
+			{
+				this.items.forEach(function(element, index, array) {
+					callback.call(scope, element, index, array);
+				});
+			};
 		} else {
-			element = null;
+			return null;
 		}
 		return element;
 	}
