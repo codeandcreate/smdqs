@@ -16,7 +16,7 @@ It uses querySelectorAll or getElementById to get a DOM-Node.
 | 04.11.2017 | 2.0-testing | smdQS_jsHost |
 | 24.11.2017 | 2.0-testing | edited nativeOS workflow |
 | 09.01.2018 | 2.0-testing | withCredentials added to .ajax() |
-| 05.02.2018 | 2.0-testing | clean up & new forEach workflow |
+| 05.02.2018 | 2.0 | clean up & new forEach workflow |
 
 ## Examples
 
