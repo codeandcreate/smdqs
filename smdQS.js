@@ -3,7 +3,7 @@
  * smdQS - A minimalistic javascript object for the jquery babied
  *
  * @function smdQS
- * @version 2.0-testing
+ * @version 2.0
  * @author Matthias Weiß <m.weiss@smdigital.de>
  *
  * @changes     20150000    MW    :   - initialversion
