@@ -7,11 +7,13 @@ It uses querySelectorAll or getElementById to get a DOM-Node.
 
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Version&nbsp;&nbsp;&nbsp;| Info |
 |---|---|---|
+| 08.03.2018 | 1.1 | merged changes from smdQS, added demo files |
 | 15.01.2018 | 1.0 | initial fork of smdQS, dropped nativeOS code |
 
 ## Examples
 
 - ajax() call:
+
 ``` js
 sQS().ajax({
 	url:		"/testscript.php", 		//required
@@ -27,6 +29,7 @@ sQS().ajax({
 ```
 
 - ready() - Execute something on document ready:
+
 ``` js
 sQS().ready(function() {
 	console.log("document is ready");					
@@ -34,6 +37,7 @@ sQS().ready(function() {
 ```
 
 - requireJS() - load an other js:
+
 ``` js
 sQS().requireJS("/js/somejsfile.js", function() {
 	console.log("js file is loaded.");					
@@ -41,17 +45,32 @@ sQS().requireJS("/js/somejsfile.js", function() {
 ```
 
 - requireCSS() - load an other css:
+
 ``` js
 sQS().requireCSS("/css/somecssfile.css", function() {
 	console.log("css file is loaded.");					
 }
 ```
 
-- working with lists of nodes:
+- working with classes and selectors:
+
 ``` js
-var aListOfNodes = sQS(".btn");
-if (aListOfNodes !== null && aListOfNodes.isList) {
-	aListOfNodes.forEach(function(index, oneOfThisNodes) 
+var myNode = smdQS("#idOfMyNode");
+if (myNode.hasClass("aNiceClass")) {
+	myNode.removeClass("aNiceClass");
+}
+```
+
+- working with a array of nodes:
+
+``` js
+var aListOfNodes = smdQS(".btn");
+if (aListOfNodes !== null) {
+	var isAList = aListOfNodes.isList;
+
+	//...
+
+	aListOfNodes.forEach(function(oneOfThisNodes, index, array) 
 	{
 		oneOfThisNodes.removeAttribute("onclick");
 		oneOfThisNodes.addEventListener("click", function() 

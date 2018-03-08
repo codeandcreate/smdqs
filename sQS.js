@@ -1,12 +1,12 @@
 /**
  * sQS - A minimalistic javascript object for the jquery babied
  *
- * @version 1.0 - based on smdQS 2.0
+ * @version 1.1 - based on smdQS 2.0
  * @author Matthias Weiß <info@codeandcreate.de>
  *
  * @url https://github.com/codeandcreate/smdQS
  */
-(function(funcName, baseObj)
+(function (funcName, baseObj)
 {
 	funcName = funcName || "sQS";
 	baseObj  = baseObj || window;
@@ -18,7 +18,7 @@
 	/**
 	 * jQuery.ajax() Equivalent
 	 *
-	 * @param url           URL which will be called (without GET params!)
+	 * @param urlOrObject   URL which will be called (without GET params!)
 	 * @param callback      Callback function, that gets the responseText if status 200 or 201 is returned
 	 * @param data          data as array or string (...=...&...=...)
 	 * @param method        GET (default), POST, PUT, DELETE
@@ -29,14 +29,14 @@
 		var errorCallback, headers, withCredentials;
 
 		if (typeof urlOrObject === "object") {
-			data               = urlOrObject.data || "";
-			method             = urlOrObject.method || "GET";
-			callback           = urlOrObject.callback || undefined;
-			errorCallback      = urlOrObject.errorCallback || undefined;
-			headers            = urlOrObject.headers || undefined;
-			withCredentials    = urlOrObject.withCredentials || undefined;
+			data            = urlOrObject.data || "";
+			method          = urlOrObject.method || "GET";
+			callback        = urlOrObject.callback || undefined;
+			errorCallback   = urlOrObject.errorCallback || undefined;
+			headers         = urlOrObject.headers || undefined;
+			withCredentials = urlOrObject.withCredentials || undefined;
 
-			urlOrObject        = urlOrObject.url || undefined;
+			urlOrObject = urlOrObject.url || undefined;
 		}
 
 		if (typeof urlOrObject === "undefined" || typeof callback === "undefined") {
@@ -55,20 +55,20 @@
 		}
 
 		if (xmlHttp !== null) {
-			function readyStateHandler(e)
+
+			xmlHttp.onload = function(e) 
 			{
 				if (xmlHttp.readyState === 4 && (xmlHttp.status === 200 || xmlHttp.status === 201)) {
 					callback(xmlHttp.responseText);
 				} else if (typeof errorCallback === "function") {
 					errorCallback(xmlHttp);
 				}
-			}
-
-			xmlHttp.onload = readyStateHandler;
+			};
 
 			if (typeof data === "undefined") {
 				data = "";
 			}
+
 			if (method !== "GET" && method !== "POST") {
 				method = "GET";
 			}
@@ -119,7 +119,9 @@
 	function __hashString(s)
 	{
 		var hash = 0, i, chr;
-		if (s.length === 0) return hash;
+		if (s.length === 0) {
+			return hash;
+		}
 		for (i = 0; i < s.length; i++) {
 			chr  = s.charCodeAt(i);
 			hash = ((hash << 5) - hash) + chr;
@@ -189,8 +191,8 @@
 			if (callback && typeof(callback) === "function") {
 				newElement.onload = callback;
 			}
-
-			if (ref === null) {
+			
+			if (ref === null || typeof ref === "undefined") {
 				window.document.querySelector("head").appendChild(newElement);
 			} else {
 				ref.parentNode.insertBefore(newElement, ref);
@@ -239,7 +241,10 @@
 	function _docReady(callback, context)
 	{
 		if (__readyFired) {
-			setTimeout(function () {callback(context);}, 1);
+			setTimeout(function ()
+			{
+				callback(context);
+			}, 1);
 			return;
 		} else {
 			__readyList.push({fn: callback, ctx: context});
@@ -332,6 +337,7 @@
 		} else {
 			return null;
 		}
+
 		return element;
 	}
 

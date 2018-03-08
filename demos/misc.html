@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="utf-8" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>sQS Demos</title>
+		<script src="../sQS.js"></script>
+	</head>
+	<body>
+		<header>
+			<h1>sQS Demos</h1>
+		</header>
+		<main>
+			<article>
+				<p>
+					This demostrates working with selectors, .ready(), .requireJS(), .requireCSS() and .ajax().
+			</article>
+			<button class="cssLoader" data-css="misc.css">Load demo CSS with requreCSS</button>
+			<button class="ajaxLoader" data-ajax="misc_ajax.xml">Load misc_ajax.xml with .ajax()</button>
+		</main>
+		<hr>
+		<section>
+			<pre id="debugOutput"></pre>
+		</section>
+		<footer>
+			<script>
+				sQS().ready(function() 
+				{
+					sQS("#debugOutput").insertAdjacentHTML('beforeend', "document ready\n");
+
+					sQS().requireJS("../tools/localstorage.js", function() 
+					{
+						sQS("#debugOutput").insertAdjacentHTML('beforeend', "finished loading localstorage.js\n");
+					});
+
+					sQS().requireJS("../tools/nodelist_ie_polyfill.js", function() 
+					{
+						sQS("#debugOutput").insertAdjacentHTML('beforeend', "finished loading nodelist_ie_polyfill.js\n");
+					});
+
+					sQS().requireJS("misc.js", function() 
+					{
+						sQS("#debugOutput").insertAdjacentHTML('beforeend', "finished loading misc.js\n");
+					});
+				});
+			</script>
+		</footer>
+	</body>
+</html>
