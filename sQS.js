@@ -1,7 +1,7 @@
 /**
  * sQS - A minimalistic javascript object for the jquery babied
  *
- * @version 1.1 - based on smdQS 2.0
+ * @version 1.2 - based on smdQS 2.0
  * @author Matthias Weiß <info@codeandcreate.de>
  *
  * @url https://github.com/codeandcreate/smdQS
@@ -370,6 +370,7 @@
 			element.requireJS  = _requireJS;
 			element.requireCSS = _requireCSS;
 			element.ready      = _docReady;
+			element.version    = 1.2;
 		}
 
 		return element;

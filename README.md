@@ -7,6 +7,7 @@ It uses querySelectorAll or getElementById to get a DOM-Node.
 
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Version&nbsp;&nbsp;&nbsp;| Info |
 |---|---|---|
+| 14.12.2018 | 1.2 | merged some changes from smdQS, cleanup |
 | 08.03.2018 | 1.1 | merged changes from smdQS, added demo files |
 | 15.01.2018 | 1.0 | initial fork of smdQS, dropped nativeOS code |
 
